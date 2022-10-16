@@ -1,0 +1,26 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/ItoshiTeruz/UI-LIB-Re-Upload/main/Lib.lua')))()
+local w = library:CreateWindow("Refinery") -- Creates the window
+local b = w:CreateFolder("Shit") -- Creates the folder(U will put here your buttons,etc)
+
+b:Button("Reload Slot",function()
+    game:GetService("ReplicatedStorage").Events.ReloadSlot:InvokeServer()
+end)
+
+b:Button("Save Data",function()
+    game:GetService("ReplicatedStorage").Events.ClientEvent:FireServer("SaveData")
+end)
+
+b:Button("Easy Sell Ramp",function()
+    for i,v in pairs(game:GetDescendants()) do
+        if v.Name == "FUCKINGRAMP" then
+            v:Destroy()
+        end
+    end
+    local a = Instance.new("Part")
+    a.Name = "FUCKINGRAMP"
+    a.Anchored = true
+    a.Parent = workspace
+        a.CFrame = CFrame.new(-431.851044, 1.19192159, -91.6161575, -0.707106709, -0.171064377, -0.686102808, -8.94069672e-08, 0.970295787, -0.241921455, 0.707106829, -0.171064228, -0.686102748)
+        a.Rotation = Vector3.new(160.58, -43.32, 166.4)
+        a.Size = Vector3.new(41, 1, 16)
+end)
