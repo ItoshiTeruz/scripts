@@ -1,0 +1,149 @@
+--Original script created by: https://v3rmillion.net/member.php?action=profile&uid=832291
+--Lucky gta
+--UI By Rayfield
+--GUI Created by 265/Itoshi UD#7222 for ease of access
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+
+local Window = Rayfield:CreateWindow({
+	Name = "Taxi Boss",
+	LoadingTitle = "Taxi Boss Script",
+	LoadingSubtitle = "Made By Lucky gta on v3rmillion",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil, -- Create a custom folder for your hub/game
+		FileName = "taxigame"
+	}
+})
+
+
+local Tab = Window:CreateTab("Main")
+
+xmass = false
+autoopen = false
+speed = 1000
+present = "basic"
+httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+PlaceId, JobId = game.PlaceId, game.JobId
+HttpService = game:GetService("HttpService")
+Players = game:GetService("Players")
+TeleportService = game:GetService("TeleportService")
+
+local Label = Tab:CreateLabel("Script Created By 'Lucky gta' on v3rmillion")
+local Label = Tab:CreateLabel("UI Added by 265 for ease of access")
+
+
+local Label = Tab:CreateLabel("Speed = More Money Higher The Value")
+
+
+local i1 = Tab:CreateInput({
+	Name = "Opening Speed",
+	PlaceholderText = "Speed",
+	RemoveTextAfterFocusLost = false,
+	Callback = function(Text)
+        speed = Text
+	end,
+})
+
+local Dropdown = Tab:CreateDropdown({
+	Name = "Select present",
+	Options = {"Basic","Epic","Legendary"},
+	CurrentOption = "Basic",
+	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Option)
+        if Option == "Basic" then present = "basic"
+        elseif Option == "Epic" then present = "epic"
+        elseif Option == "Legendary" then present = "legend"
+    end
+	end,
+})
+
+local t1 = Tab:CreateButton({
+	Name = "Open Presents",
+	Callback = function()
+		autoopen = true
+        task.wait(180)
+        autoopen = false
+	end,
+})
+
+local t2 = Tab:CreateToggle({
+	Name = "Decoration Autofarm",
+	CurrentValue = false,
+	Flag = "decoration", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        xmass = Value
+	end,
+})
+
+coroutine.wrap(function()
+    while wait() do
+        if autoopen == true and task.wait() then
+            for i=1,speed do
+                print(i)
+                        task.spawn(function()
+                        while autoopen do
+                        game:GetService("ReplicatedStorage").Christmas.OpenPresent:InvokeServer(present)
+                        wait(1)
+                    end
+                end)
+            end
+        end       
+    end
+end)()
+
+    coroutine.wrap(function()
+        while wait() do
+            if xmass == true and task.wait(3) then
+                    pcall(function()
+                    game:GetService("ReplicatedStorage").Christmas.ResetTree:InvokeServer()
+                 end)
+            end
+        end
+    end)()
+
+    coroutine.wrap(function()
+        while wait() do
+                if xmass == true and task.wait(0.1) then  
+                    pcall(function()
+                        for i,v in pairs(game:GetService("Workspace").Christmas.DecorationHunt:GetDescendants()) do
+                           if v.Name == "client" and xmass == true and v.MeshId == game:GetService("Workspace").Christmas.hologram.MeshId then
+                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                         wait(0.2)
+                        game:GetService("ReplicatedStorage").Christmas.PickupDecoration:InvokeServer(v.Parent)
+                        wait(0.2)
+                               game.Players.LocalPlayer.Character:MoveTo(game:GetService("Workspace").Christmas.TreeModel.Deliver.Position)
+                        wait(0.2)
+                        game:GetService("ReplicatedStorage").Christmas.DeliverDecoration:InvokeServer()
+                        wait(0.2)
+                           end
+                    end
+                end)
+            end
+        end
+    end)()
+
+
+
+    local Button = Tab:CreateButton({
+        Name = "Serverhop",
+        Callback = function()
+            if httprequest then
+                local servers = {}
+                local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", PlaceId)})
+                local body = HttpService:JSONDecode(req.Body)
+                if body and body.data then
+                    for i, v in next, body.data do
+                        if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
+                            table.insert(servers, 1, v.id)
+                        end 
+                    end
+                end
+                if #servers > 0 then
+                    TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+                else
+                    warn("Cant Find A Server")
+                end
+            end
+        end,
+    })
